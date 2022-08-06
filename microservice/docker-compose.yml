@@ -1,0 +1,41 @@
+version: "3"
+
+services:
+
+  customerapp:
+    build: .
+    volumes:
+      - ./:/var/www
+    depends_on:
+      - customerapp-postgres
+      - customerapp-redis
+
+  customerapp-postgres:
+    image: postgres
+    volumes:
+      - "./.docker/dbdata:/var/lib/postgresql/data"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+    ports:
+      - "5432"
+
+  customerapp-redis:
+    image: redis:alpine
+    expose:
+      - 6379
+
+  customerapp-nginx:
+    build: ./.docker/nginx
+    restart: always
+    ports:
+      - "8002:8002"
+    volumes:
+      - ./:/var/www
+    depends_on:
+      - customerapp
+
+networks:
+  default:
+    external:
+      name: rails-api-network
