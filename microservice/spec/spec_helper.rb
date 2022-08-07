@@ -13,7 +13,13 @@
 # it.
 #
 # See https://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
+
+require 'karafka/testing/rspec/helpers'
+
 RSpec.configure do |config|
+  config.disable_monkey_patching!
+  config.order = :random
+  config.include Karafka::Testing::RSpec::Helpers
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest
   # assertions if you prefer.
