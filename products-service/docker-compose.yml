@@ -1,0 +1,46 @@
+version: "3"
+
+services:
+
+  productapp:
+    build: .
+    volumes:
+      - ./:/var/www
+    depends_on:
+      - productapp-postgres
+      - productapp-redis
+    ports:
+      - "8010:8010"
+    env_file:
+      - .env
+
+  productapp-postgres:
+    image: postgres
+    volumes:
+      - "./.docker/dbdata:/var/lib/postgresql/data"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+    ports:
+      - "5432"
+    restart: always
+
+  productapp-redis:
+    image: redis:alpine
+    expose:
+      - 6379
+
+  productapp-nginx:
+    build: ./.docker/nginx
+    restart: always
+    ports:
+      - "8001:8020"
+    volumes:
+      - ./:/var/www
+    depends_on:
+      - productapp
+
+networks:
+  default:
+    external:
+      name: rails-api-network
