@@ -1,0 +1,5 @@
+.idea
+customer_service/nova
+product_service/nova
+rental_service/nova
+*dbdata*
