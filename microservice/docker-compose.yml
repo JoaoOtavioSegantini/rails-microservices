@@ -9,6 +9,11 @@ services:
     depends_on:
       - customerapp-postgres
       - customerapp-redis
+    ports:
+      - "8010:8010"
+    env_file:
+      - .env   
+
 
   customerapp-postgres:
     image: postgres
@@ -19,6 +24,7 @@ services:
       POSTGRES_PASSWORD: 123456
     ports:
       - "5432"
+    restart: always
 
   customerapp-redis:
     image: redis:alpine

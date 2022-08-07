@@ -4,7 +4,7 @@
 set -m
 
 # Start the primary process and put it in the background
-php-fpm &
+bundle install && bin/rails db:create && bin/rails db:migrate && bundle exec unicorn -c config/unicorn.rb &
 
 # Start the helper process
 nginx -g 'daemon off;' 
