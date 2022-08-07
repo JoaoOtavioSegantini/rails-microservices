@@ -4,8 +4,10 @@ require ::File.expand_path('../config/environment', __FILE__)
 
 class KarafkaApp < Karafka::App
   setup do |config|
-    config.kafka = { 'bootstrap.servers': '127.0.0.1:9092' }
+    config.kafka = { 'bootstrap.servers': 'kafka:9092' }
     config.client_id = 'example_app'
+    config.concurrency = 2
+   # config.max_wait_time = 500 # 0.5 second
     # Recreate consumers with each batch. This will allow Rails code reload to work in the
     # development mode. Otherwise Karafka process would not be aware of code changes
     config.consumer_persistence = !Rails.env.development?
@@ -17,12 +19,15 @@ class KarafkaApp < Karafka::App
   # listen to only what you really need for given environment.
   Karafka.monitor.subscribe(Karafka::Instrumentation::LoggerListener.new)
   # Karafka.monitor.subscribe(Karafka::Instrumentation::ProctitleListener.new)
+  Karafka.producer.monitor.subscribe(
+    WaterDrop::Instrumentation::LoggerListener.new(Karafka.logger)
+  )
 
   routes.draw do
     # Uncomment this if you use Karafka with ActiveJob
     # You ned to define the topic per each queue name you use
     # active_job_topic :default
-    topic :example do
+    topic :orders do
       consumer ExampleConsumer
     end
   end
