@@ -22,6 +22,7 @@ gem "jbuilder"
 # gem "kredis"
 
 gem 'keycloak'
+gem 'karafka'
 
 # Auth
 gem 'devise_token_auth', '>= 1.2.0', git: "https://github.com/lynndylanhurley/devise_token_auth"
@@ -56,6 +57,7 @@ group :development, :test do
   gem "dotenv-rails"
   gem 'shoulda-matchers', '~> 4.0'
   gem 'database_cleaner'
+  gem 'karafka-testing', '>= 2.0.0.rc1'
 end
 
 group :development do
