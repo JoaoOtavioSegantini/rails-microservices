@@ -1,7 +1,9 @@
 class Order < ApplicationRecord
   belongs_to :customer
-  has_many :order_items
-  has_many :payments
+  has_many :order_items, dependent: :destroy
+  has_many :payments, dependent: :destroy
+
+  accepts_nested_attributes_for :order_items
 
   before_validation :adjust_total
   before_update :adjust_balance
@@ -35,12 +37,51 @@ class Order < ApplicationRecord
     if self.balance != (get_total - total_payments) 
       self.balance = get_total - total_payments
     end
+
+    message = prepare(self)
+    new_message(message)
   end
 
   def adjust_total
     if self.total != get_total 
       self.total = get_total
     end
+
+    message = prepare(self)
+    new_message(message)
+  end
+
+  def prepare(order)
+        prepared_order = {
+            :order => {
+                :id => order.id,
+                :customer_id => order.customer_id,
+                :status => order.status,
+                :discount => order.discount,
+                :total => order.total,
+                :order_date => order.order_date.strftime("%Y-%m-%d"),
+            }
+          }
+
+        items_final = []
+        order.order_items.each do |item|
+            items['id'] = item.id
+            items['order_id'] = item.order_id
+            items['qtd'] = item.qtd
+            items['total'] = item.qtd * item.product.price
+            items['product']['id'] = item.product_id
+            items['product']['name'] = item.product.name
+            items_final += items
+        end
+        prepared_order['order']['items'] = items_final
+        return prepared_order
+  end
+
+  def new_message(message)
+      Karafka.producer.produce_async(
+        topic: 'orders',
+        payload: message.to_json
+      )
   end
 
 end

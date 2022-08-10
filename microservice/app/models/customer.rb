@@ -1,5 +1,5 @@
 class Customer < ApplicationRecord
-    has_many :orders
+    has_many :orders, dependent: :destroy
 
     after_create :set_queue
     after_update :set_queue
