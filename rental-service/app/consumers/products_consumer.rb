@@ -6,9 +6,9 @@ class ProductsConsumer < ApplicationConsumer
     messages.each { |message| puts message.payload }
     messages.each do |message|
       
-    Product.find(:id => message.payload.id).first_or_create(
-      :name => message.payload.name,
-      :price => message.payload.price,
+    Product.where(:id => message.payload["id"]).first_or_create(
+      :name => message.payload["name"],
+      :price => message.payload["price"],
     )
     end
   end

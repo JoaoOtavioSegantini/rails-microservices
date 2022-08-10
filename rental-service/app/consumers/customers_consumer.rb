@@ -5,11 +5,11 @@ class CustomersConsumer < ApplicationConsumer
   def consume
     messages.each { |message| puts message.payload }
     messages.each do |message|
-      
-    Customer.find(:id => message.payload.id).first_or_create(
-      :name => message.payload.name,
-      :email => message.payload.email,
-      :phone => message.payload.phone
+
+    Customer.where(:id => message.payload["id"]).first_or_create(
+      :name => message.payload["name"],
+      :email => message.payload["email"],
+      :phone => message.payload["phone"]
     )
     end
   end

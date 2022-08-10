@@ -6,30 +6,29 @@ class ExampleConsumer < ApplicationConsumer
     messages.each { |message| puts message.payload }
 
     messages.each do |message|
-      @order = Order.find(message.payload.order.id)
+      @order = Order.find(message.payload["order"]["id"])
       if (@order) 
-          @order.destroy
+          @order.destroy!
       end
 
       Order.create({
-        :id => message.payload.order.id,
-        :customer_id => message.payload.order.customer_id,
-        :status => message.payload.order.status,
-        :discount => message.payload.order.discount,
-        :total => message.payload.order.total,
-        :order_date => message.payload.order.order_date,
+        :id => message.payload["order"]["id"],
+        :customer_id => message.payload["order"]["customer_id"],
+        :status => message.payload["order"]["status"],
+        :discount => message.payload["order"]["discount"],
+        :total => message.payload["order"]["total"],
+        :order_date => message.payload["order"]["order_date"],
     })
 
-    message.payload.order.order_items.each do |item|
+    message.payload["order"]["items"].each do |item|
 
-      Product.where(:id => item.product.id).first_or_create(:name => item.product.name)
+      Product.where(:id => item["product"]["id"]).first_or_create(:name => item["product"]["name"])
 
-      OrderItem.create({
-              :id => item.id,
-              :order_id => item.order_id,
-              :product_id => item.product.id,
-              :qtd => item.qtd,
-              :total => item.total
+      OrderItem.where(:id => item["id"]).first_or_create({
+              :order_id => item["order_id"],
+              :product_id => item["product"]["id"],
+              :qtd => item["qtd"],
+              :total => item["total"]
       })
       end
     end 
