@@ -10,7 +10,7 @@ services:
       - rentalapp-postgres
       - rentalapp-redis
     ports:
-      - "8010:8010"
+      - "8009:8009"
     env_file:
       - .env
 
