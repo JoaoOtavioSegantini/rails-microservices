@@ -3,7 +3,8 @@ class OrderItem < ApplicationRecord
   belongs_to :order
 
 
-  before_validation :adjust_balance, :adjust_total
+  before_create :adjust_balance, :adjust_total
+  before_update :adjust_balance, :adjust_total
   before_destroy :adjust_balance, :adjust_total
 
   validates :qtd, presence: true

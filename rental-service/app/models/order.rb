@@ -5,15 +5,17 @@ class Order < ApplicationRecord
 
   accepts_nested_attributes_for :order_items
 
-  before_validation :adjust_total
-  before_update :adjust_balance
+  before_create :adjust_total
+  before_update :adjust_balance, :adjust_total
 
   validates :status, :balance, :total, :order_date, presence: true
 
   private
 
   def get_total
-     total = get_items_total + self.late_fee + self.delivery_fee - self.discount
+    late_tax = self.late_fee != nil ? self.late_fee : 0
+    delivery_tax = self.delivery_fee != nil ? self.delivery_fee : 0
+     total = get_items_total + late_tax + delivery_tax - (self.discount ||= 0)
      total
   end
 
@@ -59,7 +61,7 @@ class Order < ApplicationRecord
                 :status => order.status,
                 :discount => order.discount,
                 :total => order.total,
-                :order_date => order.order_date.strftime("%Y-%m-%d"),
+                :order_date => order.order_date.strftime("%Y-%m-%d")
             }
           }
 
@@ -71,9 +73,11 @@ class Order < ApplicationRecord
             items['total'] = item.qtd * item.product.price
             items['product']['id'] = item.product_id
             items['product']['name'] = item.product.name
+            items['product']['price'] = item.product.price
+            items['product']['description'] = item.product.description
             items_final += items
         end
-        prepared_order['order']['items'] = items_final
+        prepared_order["order"]["items"] = items_final
         return prepared_order
   end
 
