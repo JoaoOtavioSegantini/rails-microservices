@@ -4,7 +4,7 @@
 set -m
 
 # Start the primary process and put it in the background
-bundle install && bin/rails db:create && bin/rails db:migrate && bundle exec unicorn -c config/unicorn.rb && bundle exec karafka server &
+bundle install && bin/rails db:create && bin/rails db:migrate && bundle exec unicorn -c config/unicorn.rb &
 
 # Start the helper process
 nginx -g 'daemon off;' 
