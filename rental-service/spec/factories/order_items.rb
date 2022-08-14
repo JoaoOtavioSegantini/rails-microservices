@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :order_item do
-    product { nil }
-    order { nil }
+    product
+    order
     qtd { "MyString" }
     total { "9.99" }
   end

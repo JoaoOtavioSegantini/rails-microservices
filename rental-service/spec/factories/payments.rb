@@ -1,9 +1,9 @@
 FactoryBot.define do
   factory :payment do
-    amount { "9.99" }
-    order { nil }
-    payment_type { "MyString" }
-    description { "MyString" }
-    payment_date { "2022-08-07" }
+    amount { Faker::Commerce.price(range: 1.0..400.0) }
+    order 
+    payment_type { %i(credit debit bank_slip).sample.to_s }
+    description { Faker::Lorem.sentence }
+    payment_date { Time.zone.now }
   end
 end

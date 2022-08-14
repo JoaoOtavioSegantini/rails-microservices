@@ -1,9 +1,9 @@
 FactoryBot.define do
   factory :product do
-    name { "MyString" }
-    description { "MyString" }
-    price { "9.99" }
-    qtd_avaliable { 1 }
-    qtd_total { 1 }
+    name { Faker::Commerce.product_name }
+    description { Faker::Book.title }
+    price { Faker::Commerce.price(range: 12..180) }
+    qtd_avaliable { Faker::Number.number(digits: 2) }
+    qtd_total { Faker::Number.number(digits: 2) }
   end
 end
