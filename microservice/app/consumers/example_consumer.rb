@@ -6,30 +6,29 @@ class ExampleConsumer < ApplicationConsumer
     messages.each { |message| puts message.payload }
 
     messages.each do |message|
-      @order = Order.find(message.payload["order"]["id"])
-      if (@order) 
-          @order.destroy!
-      end
-
-      Order.create({
-        :id => message.payload["order"]["id"],
+ 
+      Order.where(:id => message.payload["order"]["id"]).update_or_create!(
         :customer_id => message.payload["order"]["customer_id"],
         :status => message.payload["order"]["status"],
         :discount => message.payload["order"]["discount"],
         :total => message.payload["order"]["total"],
         :order_date => message.payload["order"]["order_date"],
-    })
+    )
 
     message.payload["order"]["items"].each do |item|
 
-      Product.where(:id => item["product"]["id"]).first_or_create(:name => item["product"]["name"])
+      Product.where(:id => item["product"]["id"]).update_or_create!(
+        :name => item["product"]["name"], 
+        :price => item["product"]["price"], 
+        :description => item["product"]["description"]
+       )
 
-      OrderItem.where(:id => item["id"]).first_or_create({
+      OrderItem.where(:id => item["id"]).update_or_create!(
               :order_id => item["order_id"],
               :product_id => item["product"]["id"],
               :qtd => item["qtd"],
               :total => item["total"]
-      })
+      )
       end
     end 
   end
