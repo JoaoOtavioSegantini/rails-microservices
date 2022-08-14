@@ -1,5 +1,7 @@
 class Product < ApplicationRecord
 
+    validates :name, :price, :description, presence: true
+
     after_create :set_queue
     after_update :set_queue
 
