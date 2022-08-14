@@ -6,7 +6,7 @@ class CustomersConsumer < ApplicationConsumer
     messages.each { |message| puts message.payload }
     messages.each do |message|
 
-    Customer.where(:id => message.payload["id"]).first_or_create(
+    Customer.where(:id => message.payload["id"]).update_or_create(
       :name => message.payload["name"],
       :email => message.payload["email"],
       :phone => message.payload["phone"]
