@@ -1,5 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe OrderItem, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+  it { is_expected.to validate_presence_of(:qtd) }
+  it { is_expected.to belong_to(:product) }
+  it { is_expected.to belong_to(:order) }
 end
