@@ -1,6 +1,8 @@
 class Customer < ApplicationRecord
     has_many :orders, dependent: :destroy
 
+    validates :name, :email, :phone, presence: true
+
     after_create :set_queue
     after_update :set_queue
 
