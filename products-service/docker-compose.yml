@@ -10,7 +10,7 @@ services:
       - productapp-postgres
       - productapp-redis
     ports:
-      - "8008:8008"
+      - "8008:8010"
     env_file:
       - .env
 
